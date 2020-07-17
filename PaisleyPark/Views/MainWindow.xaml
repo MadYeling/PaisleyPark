@@ -48,26 +48,26 @@
         </Grid>
 
 
-        <Button Content="Load" Margin="0,5" Command="{Binding LoadPresetCommand}"/>
+        <Button Content="加载" Margin="0,5" Command="{Binding LoadPresetCommand}"/>
 
-        <GroupBox Header="Settings" Height="78">
+        <GroupBox Header="设置" Height="78">
             <StackPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical">
-                    <Label Content="Delay" VerticalAlignment="Center" Margin="0,0,5,0" Height="26"/>
-                    <Label Content="Port" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <Label Content="延时" VerticalAlignment="Center" Margin="0,0,5,0" Height="26"/>
+                    <Label Content="端口" VerticalAlignment="Center" Margin="0,0,5,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical">
 
                     <StackPanel Height="26" Orientation="Horizontal">
-                        <p:NumericTextBox TextWrapping="Wrap" VerticalAlignment="Center" ToolTip="Delay in milliseconds for each waymark to be placed."
+                        <p:NumericTextBox TextWrapping="Wrap" VerticalAlignment="Center" ToolTip="每个标点放置的延迟时间（毫秒）"
                                       Text="{Binding UserSettings.PlacementDelay, UpdateSourceTrigger=PropertyChanged}" Width="60"/>
                     </StackPanel>
 
                     <StackPanel Height="26" Orientation="Horizontal">
                         <p:NumericTextBox TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Port for HTTP Server."
                                             Text="{Binding UserSettings.Port, UpdateSourceTrigger=PropertyChanged}" Width="60"/>
-                        <Button Content="Start" Margin="10,2,0,2" Padding="10,2" Command="{Binding StartServerCommand}"/>
-                        <Button Content="Stop" Margin="10,2,0,2" Padding="10,2" Command="{Binding StopServerCommand}"/>
+                        <Button Content="启动" Margin="10,2,0,2" Padding="10,2" Command="{Binding StartServerCommand}"/>
+                        <Button Content="停止" Margin="10,2,0,2" Padding="10,2" Command="{Binding StopServerCommand}"/>
                         <CheckBox IsChecked="{Binding UserSettings.HTTPAutoStart}" Margin="5" VerticalAlignment="Center" ToolTip="Autostart server" />
                     </StackPanel>
 
@@ -78,9 +78,10 @@
         </GroupBox>
 
 		<Grid>
-			<CheckBox IsChecked="{Binding UserSettings.LocalOnly}" Content="Local Only" VerticalAlignment="Center" />
+			<CheckBox IsChecked="{Binding UserSettings.LocalOnly}" Content="本地模式" VerticalAlignment="Center" 
+            ToolTip="启用本模式后此软件的标点只有自己可见. 这是由于5.2版本更新了标点机制, 无法在战斗中更改标点导致的"/>
 			<Label HorizontalAlignment="Right">
-				<Hyperlink Command="{Binding DiscordCommand}">Join the Discord</Hyperlink>
+				<Hyperlink Command="{Binding DiscordCommand}">加入Discord</Hyperlink>
 			</Label>
 		</Grid>
 

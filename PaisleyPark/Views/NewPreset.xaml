@@ -10,19 +10,19 @@
         p:DialogCloser.DialogResult="{Binding Path=DialogResult}"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
-        Title="Create New Preset" 
+        Title="创建新预设" 
         Height="155" 
         Width="300" 
         SizeToContent="Height"
         ResizeMode="NoResize">
     <StackPanel Margin="10">
-        <Label Content="Name" FontWeight="Bold"/>
+        <Label Content="名称" FontWeight="Bold"/>
         <TextBox Text="{Binding Path=Name}" Padding="0,2" />
-        <CheckBox Content="Use current waymarks" IsChecked="{Binding Path=UseCurrentWaymarks}" Margin="0,10,0,10" />
+        <CheckBox Content="使用当前标点坐标" IsChecked="{Binding Path=UseCurrentWaymarks}" Margin="0,10,0,10" />
         <DockPanel>
-            <Button Content="Cancel" HorizontalAlignment="Left" Padding="20,2"
+            <Button Content="取消" HorizontalAlignment="Left" Padding="20,2"
                     Command="{Binding Path=CancelCommand, Mode=OneWay}" CommandParameter="{Binding ElementName=NewPresetWindow, Mode=OneWay}" />
-            <Button Content="Create" HorizontalAlignment="Right" Padding="20,2"
+            <Button Content="创建" HorizontalAlignment="Right" Padding="20,2"
                     Command="{Binding Path=CreateCommand, Mode=OneWay}" CommandParameter="{Binding ElementName=NewPresetWindow, Mode=OneWay}" />
         </DockPanel>
     </StackPanel>

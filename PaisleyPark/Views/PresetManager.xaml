@@ -9,7 +9,7 @@
         p:DialogCloser.DialogResult="{Binding Path=DialogResult}"
         prism:ViewModelLocator.AutoWireViewModel="True"
         mc:Ignorable="d"
-        Title="Preset Manager" 
+        Title="预设管理器" 
         WindowStartupLocation="CenterOwner"
         Height="373" 
         Width="340" 
@@ -23,7 +23,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button Content="OK" Margin="0,0,84,10"
+        <Button Content="确定" Margin="0,0,84,10"
                 Command="{Binding Path=OKCommand}" CommandParameter="{Binding ElementName=window, Mode=OneWay}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" />
         <StackPanel Margin="0,10,8,35" HorizontalAlignment="Right" Width="69">
             <StackPanel.Resources>
@@ -32,15 +32,15 @@
                     <Setter Property="Padding" Value="0,2" />
                 </Style>
             </StackPanel.Resources>
-            <Button Content="New" VerticalAlignment="Top" HorizontalAlignment="Stretch" ToolTip="Create a new preset."
+            <Button Content="新建" VerticalAlignment="Top" HorizontalAlignment="Stretch" ToolTip="创建一个新预设"
                     Command="{Binding AddCommand}" />
-            <Button Content="Delete" VerticalAlignment="Top" HorizontalAlignment="Stretch" ToolTip="Delete the selected preset."
+            <Button Content="删除" VerticalAlignment="Top" HorizontalAlignment="Stretch" ToolTip="删除所选预设"
                     Command="{Binding RemoveCommand}"/>
-            <Button Content="Edit" VerticalAlignment="Top" HorizontalAlignment="Stretch" ToolTip="Edit a selected preset."
+            <Button Content="编辑" VerticalAlignment="Top" HorizontalAlignment="Stretch" ToolTip="编辑所选预设"
                     Command="{Binding EditCommand}" />
-            <Button Content="Import" VerticalAlignment="Top" HorizontalAlignment="Stretch" ToolTip="Import a new preset."
+            <Button Content="导入" VerticalAlignment="Top" HorizontalAlignment="Stretch" ToolTip="导入一个新预设"
                     Command="{Binding ImportCommand}" />
-            <Button Content="Export" VerticalAlignment="Top" HorizontalAlignment="Stretch" ToolTip="Export a selected preset to clipboard."
+            <Button Content="导出" VerticalAlignment="Top" HorizontalAlignment="Stretch" ToolTip="导出选中的预设至剪贴板"
                     Command="{Binding ExportCommand}" />
         </StackPanel>
     </Grid>

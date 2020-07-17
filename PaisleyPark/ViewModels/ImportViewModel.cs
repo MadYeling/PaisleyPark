@@ -35,17 +35,17 @@ namespace PaisleyPark.ViewModels
 				// Checking validity purely by the name being specified. Could use a more robust check but this is good enough.
 				if (ImportedPreset.Name == null || ImportedPreset.Name.Trim() == string.Empty)
 				{
-					MessageBox.Show("This does not resemble a valid preset. Could not import successfully.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+					MessageBox.Show("这不是一个有效的预设，导入失败.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
 					return;
 				}
-				MessageBox.Show("Imported Preset " + ImportedPreset.Name + "!", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+				MessageBox.Show("导入预设 " + ImportedPreset.Name + "!", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				DialogResult = true;
 			}
 			// Likely not a JSON string.
 			catch (Exception ex)
 			{
 				logger.Error(ex, "Error trying to import JSON\n{0}", ImportText);
-				MessageBox.Show("Invalid input, this is not valid JSON. Could not import preset.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show("无效输入，这不是有效的JSON。无法导入预设.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
 	}

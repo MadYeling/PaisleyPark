@@ -1,4 +1,4 @@
-﻿<Window x:Name="window" x:Class="PaisleyPark.Views.EditPreset"
+<Window x:Name="window" x:Class="PaisleyPark.Views.EditPreset"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -10,19 +10,19 @@
         p:DialogCloser.DialogResult="{Binding Path=DialogResult}"
         mc:Ignorable="d"
         SizeToContent="Height"
-        Title="Edit Preset"
+        Title="编辑预设"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Height="165" 
         Width="300">
     <StackPanel Margin="10">
-        <Label Content="Name" FontWeight="Bold" />
+        <Label Content="名称" FontWeight="Bold" />
         <TextBox Text="{Binding Path=Name}" Padding="0,2" />
-        <CheckBox Content="Use current waymarks" IsChecked="{Binding Path=UseCurrentWaymarks}" Margin="0,10,0,10" />
+        <CheckBox Content="使用当前标点坐标" IsChecked="{Binding Path=UseCurrentWaymarks}" Margin="0,10,0,10" />
         <DockPanel>
-            <Button Content="Cancel" Padding="20,2" 
+            <Button Content="取消" Padding="20,2" 
                     Command="{Binding Path=CancelCommand, Mode=OneWay}" CommandParameter="{Binding ElementName=window, Mode=OneWay}" />
-            <Button Content="OK" HorizontalAlignment="Right" Padding="20,2" 
+            <Button Content="确定" HorizontalAlignment="Right" Padding="20,2" 
                     Command="{Binding Path=OKCommand, Mode=OneWay}" CommandParameter="{Binding ElementName=window, Mode=OneWay}" />
         </DockPanel>
     </StackPanel>
