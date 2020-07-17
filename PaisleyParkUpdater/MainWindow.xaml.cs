@@ -38,7 +38,7 @@ namespace PaisleyParkUpdater
 			if (!result)
 			{
 				MessageBox.Show(
-					"There was an error when trying to read the current version of Paisley Park, you will be prompted to download the latest version.",
+					"尝试读取 Paisley Park 的版本时出错，您将会被引导至其他途径下载最新版本.",
 					"Paisley Park Updater",
 					MessageBoxButton.OK,
 					MessageBoxImage.Error
@@ -48,7 +48,7 @@ namespace PaisleyParkUpdater
 			}
 
 			// Create request for Github REST API for the latest release of Paisley Park.
-			if (WebRequest.Create("https://api.github.com/repos/LeonBlade/PaisleyPark/releases/latest") is HttpWebRequest request)
+			if (WebRequest.Create("https://api.github.com/repos/MadYeling/PaisleyPark/releases/latest") is HttpWebRequest request)
 			{
 				request.Method = "GET";
 				request.UserAgent = "PaisleyPark";
@@ -70,7 +70,7 @@ namespace PaisleyParkUpdater
 							// Create HTML out of the markdown in body.
 							var html = Markdown.ToHtml(json["body"].Value<string>());
 							// Set the update string
-							UpdateString = $"Paisley Park {releaseVersion.VersionString()} is now available, you have {CurrentVersion.VersionString()}. Would you like to download it now?";
+							UpdateString = $"Paisley Park {releaseVersion.VersionString()} 现已可用, 你正在使用 {CurrentVersion.VersionString()}. 你想要现在就下载更新吗？";
 							// Set HTML in the window.
 							HTML = "<style>body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;ul{margin:0;padding:0;list-style-position:inside;}</style>" + html;
 						}
@@ -84,7 +84,7 @@ namespace PaisleyParkUpdater
 				catch (Exception)
 				{
 					var response = MessageBox.Show(
-						"Failed to fetch the latest version! Would you like to visit the page manually to check for the latest release manually?",
+						"获取最新版本失败！是否要手动访问页面以手动检查最新版本？",
 						"Paisley Park Updater",
 						MessageBoxButton.YesNo,
 						MessageBoxImage.Error
@@ -92,7 +92,7 @@ namespace PaisleyParkUpdater
 					if (response == MessageBoxResult.Yes)
 					{
 						// Visit the latest releases page on GitHub to download the latest Paisley Park.
-						Process.Start("https://github.com/LeonBlade/PaisleyPark/releases/latest");
+						Process.Start("https://github.com/MadYeling/PaisleyPark/releases/latest");
 					}
 				}
 			}
@@ -142,7 +142,7 @@ namespace PaisleyParkUpdater
 					{
 						// If the application is still alive.
 						MessageBox.Show(
-							"Paisley Park can't be shutdown gracefully. You may need to restart FFXIV if it's currently open after the update is completed.",
+							"Paisley Park 无法正常关闭. 如果更新完成时最终幻想XIV正在运行, 你可能需要重启最终幻想XIV.",
 							"Paisley Park Updater",
 							MessageBoxButton.OK,
 							MessageBoxImage.Warning
@@ -166,7 +166,7 @@ namespace PaisleyParkUpdater
 				}
 
 				// Inform the user to manually start Paisley Park again.
-				MessageBox.Show("Update complete! Please start Paisley Park to use the latest version!", "Paisley Park Updater", MessageBoxButton.OK, MessageBoxImage.Information);
+				MessageBox.Show("更新完成! 现在可以使用最新版本的 Paisley Park 了!", "Paisley Park Updater", MessageBoxButton.OK, MessageBoxImage.Information);
 
 				// Shutdown the application we're done here.
 				Application.Current.Shutdown();

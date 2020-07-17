@@ -58,7 +58,7 @@ namespace PaisleyPark.ViewModels
 		{
 			if (Application.Current.MainWindow == null || !Application.Current.MainWindow.IsInitialized)
 			{
-				MessageBox.Show("You can't create or modify a preset right now.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Warning);
+				MessageBox.Show("现在无法创建或修改预设.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Warning);
 				return false;
 			}
 
@@ -111,7 +111,7 @@ namespace PaisleyPark.ViewModels
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Something happened while creating your preset!", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show("创建预设时出现了一些问题！", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
 				logger.Error(ex, "Exception while adding a new preset.");
 			}
 		}
@@ -123,7 +123,7 @@ namespace PaisleyPark.ViewModels
 		{
 			if (SelectedItem != null)
 				if (MessageBox.Show(
-					"Are you sure you want to delete this preset?", 
+					"你确定要删除此预设吗？", 
 					"Paisley Park", 
 					MessageBoxButton.YesNo, 
 					MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -179,7 +179,7 @@ namespace PaisleyPark.ViewModels
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Something happened while editing your preset!", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show("编辑预设时出现了一些问题！", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
 				logger.Error(ex, "Exception while editing selected item.");
 			}
 		}
@@ -233,7 +233,7 @@ namespace PaisleyPark.ViewModels
                 // Set in the clipboard (need to use SetDataObject because SetText crashes).
 				Clipboard.SetDataObject(cereal);
 				MessageBox.Show(
-					string.Format("Copied preset \"{0}\" to your clipboard!", SelectedItem.Name),
+					string.Format("已将预设 \"{0}\" 复制到你的剪贴板!", SelectedItem.Name),
 					"Paisley Park",
 					MessageBoxButton.OK,
 					MessageBoxImage.Information
@@ -243,7 +243,7 @@ namespace PaisleyPark.ViewModels
 			{
 				logger.Error(ex, "Tried to copy serialized object to clipboard.\n---BEGIN---\n{0}\n---END---\n", cereal);
 				MessageBox.Show(
-					"An error occured while trying to copy this preset to your clipboard.",
+					"尝试复制预设至剪贴板时发生了一个错误.",
 					"Paisley Park",
 					MessageBoxButton.OK,
 					MessageBoxImage.Error

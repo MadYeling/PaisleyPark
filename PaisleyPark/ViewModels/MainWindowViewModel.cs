@@ -73,7 +73,7 @@ namespace PaisleyPark.ViewModels
             // Store reference to the event aggregator.
             EventAggregator = ea;
 
-            logger.Info("--- PAISLEY PARK START ---");
+            logger.Info("=== PAISLEY PARK 已启动 ===");
 
             // Deleting any old updater file.
             if (File.Exists(".PPU.old"))
@@ -83,36 +83,36 @@ namespace PaisleyPark.ViewModels
             {
                 // Get the version from the assembly.
                 CurrentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-                logger.Debug($"Current Version: {CurrentVersion}");
+                logger.Debug($"软件版本: {CurrentVersion}");
 
                 // Set window title.
                 WindowTitle = string.Format("Paisley Park {0}", CurrentVersion.VersionString());
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Couldn't get the application version.");
-                MessageBox.Show("Couldn't get Paisley Park's version to set the title.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                logger.Error(ex, "无法获取软件版本.");
+                MessageBox.Show("无法获取软件版本来设置标题.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
                 WindowTitle = "Paisley Park";
             }
 
             // Fetch an update.
-            logger.Info("Fetching update...");
+            logger.Info("获取更新...");
             FetchUpdate();
 
             // Load the settings file.
-            logger.Info("Loading settings...");
+            logger.Info("加载设置...");
             try
             {
                 UserSettings = Settings.Load();
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Error trying to load settings file.");
-                MessageBox.Show("Could not load your settings file!", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                logger.Error(ex, "尝试加载设置文件时出现错误.");
+                MessageBox.Show("无法加载你的设置文件!", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
 
-            logger.Debug("Setting up the events.");
+            logger.Debug("设置事件.");
             // Subscribe to the waymark event from the REST server.
             EventAggregator.GetEvent<WaymarkEvent>().Subscribe(waymarks =>
             {
@@ -126,7 +126,7 @@ namespace PaisleyPark.ViewModels
                 WriteWaymark(waymarks.Four, 7);
             });
 
-            logger.Debug("Subscribing to Load Preset event.");
+            logger.Debug("订阅加载预设事件.");
             try
             {
                 // Subscribe to the load preset event from the REST server.
@@ -161,7 +161,7 @@ namespace PaisleyPark.ViewModels
                 Application.Current.Shutdown();
             }
 
-            logger.Debug("Subscribing to Save Preset event.");
+            logger.Debug("订阅保存预设事件.");
             try
             {
                 // Subscribe to the save preset event from the REST server.
@@ -183,7 +183,7 @@ namespace PaisleyPark.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Could not save the preset.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("无法保存预设.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
                         logger.Error(ex, "Could not save preset");
                     }
 
@@ -207,7 +207,7 @@ namespace PaisleyPark.ViewModels
                 Application.Current.Shutdown();
             }
 
-            logger.Debug("Creating commands.");
+            logger.Debug("创建命令.");
             try
             {
                 // Create the commands.
@@ -228,7 +228,7 @@ namespace PaisleyPark.ViewModels
             // Listen for property changed.
             UserSettings.PropertyChanged += OnPropertyChanged;
 
-            logger.Info("Initializing...");
+            logger.Info("初始化...");
             // Prepare for new game launch.
             if (!Initialize())
             {
@@ -242,16 +242,16 @@ namespace PaisleyPark.ViewModels
         /// <returns>Successful initialization.</returns>
         private bool Initialize()
         {
-            logger.Info("Initializing Nhaama...");
+            logger.Info("初始化 Nhaama...");
             // Initialize Nhaama.
             if (!InitializeNhaama())
                 return false;
 
-            logger.Info("Injecting code...");
+            //logger.Info("Injecting code...");
             // Inject our code.
             // InjectCode();
 
-            logger.Info("Starting server...");
+            logger.Info("启动端口监听...");
             // Check autostart and start the HTTP server if it's true.
             if (UserSettings.HTTPAutoStart)
                 OnStartServer();
@@ -268,12 +268,12 @@ namespace PaisleyPark.ViewModels
             var gameDirectory = new DirectoryInfo(GameProcess.BaseProcess.MainModule.FileName);
             GameVersion = File.ReadAllText(Path.Combine(gameDirectory.Parent.FullName, "ffxivgame.ver"));
 
-            logger.Debug($"Game version is {GameVersion}");
+            logger.Debug($"游戏版本： {GameVersion}");
 
             // Check the game version against what we have saved in settings.
             if (UserSettings.LatestGameVersion != GameVersion)
             {
-                logger.Info($"Latest version {GameVersion} does not match the latest game version in settings {UserSettings.LatestGameVersion}. Downloading new ones.");
+                logger.Info($"游戏版本 {GameVersion} 与设置的最新版本 {UserSettings.LatestGameVersion} 不匹配. 下载新的Offset.");
                 // Create client to fetch latest version of offsets.
                 try
                 {
@@ -291,8 +291,8 @@ namespace PaisleyPark.ViewModels
                 }
                 catch (WebException ex)
                 {
-                    MessageBox.Show("Offsets were not found for your current version of the game.  This may cause unexpected problems and placing waymarks may not work.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
-                    logger.Error(ex, "Couldn't fetch or save offsets from the server!");
+                    MessageBox.Show("无法找到符合当前游戏版本的Offsets.  这也许会导致预期之外的问题并且标点功能可能无法正常运作.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                    logger.Error(ex, "无法从服务器获取或保存偏移量!");
                 }
             }
 
@@ -306,7 +306,7 @@ namespace PaisleyPark.ViewModels
             }
             catch (Exception)
             {
-                MessageBox.Show("Couldn't load the offsets file!  Please select the offsets file manually.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("无法加载偏移文件！请手动选择文件.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 var dlg = new Microsoft.Win32.OpenFileDialog
                 {
                     InitialDirectory = Environment.CurrentDirectory,
@@ -328,7 +328,7 @@ namespace PaisleyPark.ViewModels
                     }
                     catch (Exception)
                     {
-                        MessageBox.Show("Could not open this offset file. Shutting down.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("无法打开此偏移文件，程序即将退出.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
                         Application.Current.Shutdown();
                     }
                 }
@@ -348,7 +348,7 @@ namespace PaisleyPark.ViewModels
             {
                 logger.Error(ex, "Updater didn't work.");
                 var result = MessageBox.Show(
-                    "Could not run the updater. Would you like to visit the releases page to check for a new update manually?",
+                    "无法启动更新器.是否浏览网页手动检查更新？",
                     "Paisley Park",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Error
@@ -356,7 +356,7 @@ namespace PaisleyPark.ViewModels
                 // Launch the web browser to the latest release.
                 if (result == MessageBoxResult.Yes)
                 {
-                    Process.Start("https://github.com/MadYeling/PaisleyPark/releases");
+                    Process.Start("https://github.com/MadYeling/PaisleyPark/releases/latest");
                 }
             }
         }
@@ -386,8 +386,8 @@ namespace PaisleyPark.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, "Couldn't save settings");
-                    MessageBox.Show("Couldn't save settings!", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                    logger.Error(ex, "无法保存设置");
+                    MessageBox.Show("无法保存设置！", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -414,7 +414,7 @@ namespace PaisleyPark.ViewModels
             if (GameProcess == null)
             {
                 logger.Error("Couldn't get Nhaama process");
-                MessageBox.Show("Coult not get the Nhaama Process for FFXIV.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("无法获取最终幻想XIV的Nhaama进程.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
@@ -425,12 +425,12 @@ namespace PaisleyPark.ViewModels
             GameProcess.BaseProcess.Exited += (_, e) =>
             {
                 MessageBox.Show(
-                    "Looks like FINAL FANTASY XIV crashed or shut down.",
+                    "最终幻想XIV似乎已经关闭或崩溃.",
                     "Paisley Park",
                     MessageBoxButton.OK,
                     MessageBoxImage.Exclamation
                 );
-                logger.Info("FFXIV Shutdown or Crashed!");
+                logger.Info("FFXIV 关闭或崩溃!");
 
                 // Start the initialization process again.
                 Application.Current.Dispatcher.Invoke(() => Initialize());
@@ -450,7 +450,7 @@ namespace PaisleyPark.ViewModels
             catch (Exception ex)
             {
                 logger.Error(ex, $"There is an error getting your FFXIV game version. {ffxiv_folder}");
-                MessageBox.Show("There was a problem getting your game version, cannot start!", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("获取你的游戏版本时出现一个问题，无法启动！", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
 
@@ -487,7 +487,7 @@ namespace PaisleyPark.ViewModels
             // Show the dialog and if result comes back false we canceled the window.
             if (ps.ShowDialog() == false || vm.SelectedProcess == null)
             {
-                logger.Info("User didn't select a process.");
+                logger.Info("用户没有选择进程.");
                 Application.Current.Shutdown();
 
                 // Failed to select process.
@@ -767,7 +767,7 @@ namespace PaisleyPark.ViewModels
 
             if (!UserSettings.LocalOnly)
             {
-                MessageBox.Show("This version of Paisley Park only supports Local Only mode.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("此版本的Paisley Park只支持本地模式.\n这是因为5.2吉田更新了标点机制, 无法在战斗中修改.\n本地模式启动后, 用此软件修改的标点只有你自己能看见, 队友无法看见标点.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
 
@@ -780,7 +780,7 @@ namespace PaisleyPark.ViewModels
             {
                 if (WaymarkThread != null && WaymarkThread.IsAlive)
                 {
-                    MessageBox.Show("Please wait for the previous Load to finish.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("请等待上一次加载完成.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
@@ -801,7 +801,7 @@ namespace PaisleyPark.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Something happened while attemping to load your preset!",
+                    "试图加载预设时发生了一些问题！",
                     "Paisley Park",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
@@ -836,7 +836,7 @@ namespace PaisleyPark.ViewModels
             catch (Exception ex)
             {
                 logger.Error(ex, "Could not start Nancy host.");
-                MessageBox.Show($"Could not start the HTTP server on port {UserSettings.Port}!", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"无法在端口 {UserSettings.Port} 上启动HTTP服务!", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -855,7 +855,7 @@ namespace PaisleyPark.ViewModels
             catch (Exception ex)
             {
                 logger.Error(ex, "Error stopping server.");
-                MessageBox.Show("There was an error stopping the server.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("停止服务时出现了一个错误.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

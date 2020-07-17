@@ -99,7 +99,7 @@ namespace PaisleyPark.ViewModels
             // Ensure process is selected.
             if (SelectedProcess == null)
             {
-                MessageBox.Show("Please select a process before clicking OK.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("在点击确定之前请先选择一个进程.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             // Successful close.
