@@ -1,11 +1,11 @@
 ## 来自译者的话
-**如果你是在GitHub上搜索到此项目的话，还请看完最后这点。**
+**如果你是在GitHub上搜索到此项目的话，还请看完这些话。**
 #### 请勿在任何途径传播、宣传此分支上的 Paisley Park
-- 此软件完全由[LeonBlade](httPS://github.com/LeonBlade)开发，本人只是将其翻译成为中文并，有问题请找原作者。
+- 此软件完全由[LeonBlade](https://github.com/LeonBlade)开发，本人只是将其翻译成为中文，有问题请找原作者。
 - 本人不在任何平台宣传发布此软件，此项目基本属于疫情期间太无聊没事找事，只用于程序员朋友间交流，如果事态控制不住随时可能删除此项目。
 - 目前有其它人搬运、翻译和提供国服Offset，我和他们完全不认识，他们搬运的用出事情还请不要怪到我头上来。
 - 此分支代码中的Offset更新地址和软件更新地址已经修改到此分支上。
-- 项目原链接：[PaisleyPark](httPS://github.com/LeonBlade/PaisleyPark)
+- 项目原链接：[PaisleyPark](https://github.com/LeonBlade/PaisleyPark)
 
 
 # Paisley Park 中文介绍
@@ -14,7 +14,7 @@ Paisley Park 是一个自动标点工具，允许你保存预设的标点并且�
 
 ## 它是如何工作的？
 
-Paisley Park 通过修改程序内存来工作（PS：注入程序用的代码已被废弃），但是 Paisley Park 不会对任何进程注入任何恶意代码，只注入代码用来帮助调试进程中已经存在的函数。当应用程序正常关闭后，Paisley Park 会清理它所执行的代码，就像一切都没有发生过一样。Paisley Park 不会永久的影响任何进程。如果你希望查看运行时注入的内容，可以[点击这里](httPS://github.com/Madyeling/PaisleyPark/blob/master/PaisleyPark/ViewModels/MainWindowViewModel.cs#L213)。
+Paisley Park 通过修改程序内存来工作（PS：注入程序用的代码已被废弃），但是 Paisley Park 不会对任何进程注入任何恶意代码，只注入代码用来帮助调试进程中已经存在的函数。当应用程序正常关闭后，Paisley Park 会清理它所执行的代码，就像一切都没有发生过一样。Paisley Park 不会永久的影响任何进程。如果你希望查看运行时注入的内容，可以[点击这里](https://github.com/Madyeling/PaisleyPark/blob/master/PaisleyPark/ViewModels/MainWindowViewModel.cs#L213)。
 
 ## 我用这个会有麻烦吗？
 
@@ -54,13 +54,13 @@ Paisley Park 设计的初衷是为了方便在各种场合中放置标点，考�
 
 ## 最后
 
-感谢你抽出时间来观看这个项目，我希望它对你的零式之夜或者是其它使用它的理由有所帮助。如果你有任何的建议，请在这个GitHub页面上上留下“Issues”，或者使用Discord联系：LeonBlade#9988。（PS：请去[原作者](httPS://github.com/LeonBlade/PaisleyPark)的GitHub留Issues，用英文！）
+感谢你抽出时间来观看这个项目，我希望它对你的零式之夜或者是其它使用它的理由有所帮助。如果你有任何的建议，请在这个GitHub页面上上留下“Issues”，或者使用Discord联系：LeonBlade#9988。（PS：请去[原作者](https://github.com/LeonBlade/PaisleyPark)的GitHub留Issues，用英文！）
 
 你也许已经知道我是"SSTool"的原作者，这是一个最终幻想XIV的截图工具；或是CE脚本"Tabletopper"的原作者，这个脚本能让任何东西都当做桌台物品，以获得更好的装修体验（PS：嗯？鲶鱼精原型？）。我花费了大量的精力来为他人创造这些工具，并且我计划着在未来创造更多。对于到目前为止支持我的人，我非常感谢你们。
 
 如果你出于任何原因想捐款给我，我非常感激。不过，无论是否有金钱上的支持，我们都非常感激。知道人们在使用我的工具并享受它们让我很开心。
 
-httPS://ko-fi.com/leonblade
+https://ko-fi.com/leonblade
 
 
 # 以下是英文原文
@@ -71,7 +71,7 @@ Paisley Park is a waymark preset tool that allows you to save and load waymark p
 
 ## How does it work?
 
-Paisley Park works by injecting assembly into the running application. Paisley Park however does not perform any malicious code on any process, and only injects code to assist with calling functions that already exist inside of the process. When the application is shut down properly, Paisley Park cleans up its mess as if nothing happened. Nothing Paisley Park does affects any process permanently. If you wish to see what is injected at runtime, you can view so [here](httPS://github.com/LeonBlade/PaisleyPark/blob/master/PaisleyPark/ViewModels/MainWindowViewModel.cs#L213).
+Paisley Park works by injecting assembly into the running application. Paisley Park however does not perform any malicious code on any process, and only injects code to assist with calling functions that already exist inside of the process. When the application is shut down properly, Paisley Park cleans up its mess as if nothing happened. Nothing Paisley Park does affects any process permanently. If you wish to see what is injected at runtime, you can view so [here](https://github.com/LeonBlade/PaisleyPark/blob/master/PaisleyPark/ViewModels/MainWindowViewModel.cs#L213).
 
 ## Will I get in trouble for using this?
 
@@ -117,4 +117,4 @@ You may already know of me as the original creator of what is now referred to as
 
 If you wish to donate to me for any reason, I greatly appreciate it. Any support though, monetarily or not is greatly appreciated. Knowing that people are using my tools and enjoying them makes me happy.
 
-httPS://ko-fi.com/leonblade
+https://ko-fi.com/leonblade
