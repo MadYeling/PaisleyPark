@@ -1,23 +1,24 @@
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Threading;
+using System.Windows;
+using Microsoft.Win32;
 using Nancy.Hosting.Self;
 using Newtonsoft.Json;
-using Nhaama.FFXIV;
 using Nhaama.Memory;
-using Nhaama.Memory.Native;
+using NLog;
 using PaisleyPark.Common;
 using PaisleyPark.Models;
 using PaisleyPark.Views;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace PaisleyPark.ViewModels
 {
@@ -31,15 +32,22 @@ namespace PaisleyPark.ViewModels
         public Preset CurrentPreset { get; set; }
         public string WindowTitle { get; set; } = "Paisley Park";
         public bool IsServerStarted { get; set; } = false;
-        public bool IsServerStopped { get => !IsServerStarted; }
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        public bool IsServerStopped
+        {
+            get => !IsServerStarted;
+        }
+
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private NancyHost Host;
         private Thread WaymarkThread;
         private Offsets Offsets;
         private readonly Version CurrentVersion;
         private string GameVersion;
         public string DiscordUri { get; private set; } = "https://discord.gg/hq3DnBa";
-        private static readonly Uri OffsetUrl = new Uri("https://raw.githubusercontent.com/MadYeling/PaisleyPark/master/Offsets/");
+
+        private static readonly Uri OffsetUrl =
+            new Uri("https://raw.githubusercontent.com/MadYeling/PaisleyPark/master/Offsets/");
 
 #pragma warning disable IDE1006 // Naming Styles
 
@@ -59,32 +67,41 @@ namespace PaisleyPark.ViewModels
 
         public MainWindowViewModel(IEventAggregator ea)
         {
+            // 测试事件聚合器是否为空。
             // Test if the Event Aggregator is null.
             if (ea == null)
             {
-                MessageBox.Show("Event Aggregator is null, unable to start.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Event Aggregator is null, unable to start.", "Paisley Park", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 logger.Error("Event Aggregator is null");
                 Application.Current.Shutdown();
             }
 
+            // 设置安全协议，主要针对Windows 7用户。
             // Set the security protocol, mainly for Windows 7 users.
-            ServicePointManager.SecurityProtocol = (ServicePointManager.SecurityProtocol & SecurityProtocolType.Ssl3) | (SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12);
+            ServicePointManager.SecurityProtocol = (ServicePointManager.SecurityProtocol & SecurityProtocolType.Ssl3) |
+                                                   (SecurityProtocolType.Tls | SecurityProtocolType.Tls11 |
+                                                    SecurityProtocolType.Tls12);
 
+            // 存储对事件聚合器的引用。
             // Store reference to the event aggregator.
             EventAggregator = ea;
 
             logger.Info("=== PAISLEY PARK 已启动 ===");
 
+            // 删除所有旧的更新文件。
             // Deleting any old updater file.
             if (File.Exists(".PPU.old"))
                 File.Delete(".PPU.old");
 
             try
             {
+                // 从程序集获取版本。
                 // Get the version from the assembly.
-                CurrentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version;
                 logger.Debug($"软件版本: {CurrentVersion}");
 
+                // 设置窗口标题。
                 // Set window title.
                 WindowTitle = string.Format("Paisley Park {0}", CurrentVersion.VersionString());
             }
@@ -95,10 +112,12 @@ namespace PaisleyPark.ViewModels
                 WindowTitle = "Paisley Park";
             }
 
+            // 获取更新。
             // Fetch an update.
             logger.Info("获取更新...");
             FetchUpdate();
 
+            // 加载设置文件。
             // Load the settings file.
             logger.Info("加载设置...");
             try
@@ -113,6 +132,7 @@ namespace PaisleyPark.ViewModels
             }
 
             logger.Debug("设置事件.");
+            // 从REST服务器订阅waymark事件。
             // Subscribe to the waymark event from the REST server.
             EventAggregator.GetEvent<WaymarkEvent>().Subscribe(waymarks =>
             {
@@ -129,6 +149,7 @@ namespace PaisleyPark.ViewModels
             logger.Debug("订阅加载预设事件.");
             try
             {
+                // 从REST服务器订阅加载预设事件。
                 // Subscribe to the load preset event from the REST server.
                 var loadPresetEvent = EventAggregator.GetEvent<LoadPresetEvent>();
                 if (loadPresetEvent == null)
@@ -157,13 +178,15 @@ namespace PaisleyPark.ViewModels
             catch (Exception ex)
             {
                 logger.Error(ex, "Couldn't subscribe to LoadPresetEvent.");
-                MessageBox.Show("Couldn't subscribe to Load Preset event.", "Paisely Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Couldn't subscribe to Load Preset event.", "Paisely Park", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
 
             logger.Debug("订阅保存预设事件.");
             try
             {
+                // 从REST服务器订阅保存预设事件。
                 // Subscribe to the save preset event from the REST server.
                 var savePresetEvent = EventAggregator.GetEvent<SavePresetEvent>();
                 if (savePresetEvent == null)
@@ -203,13 +226,15 @@ namespace PaisleyPark.ViewModels
             catch (Exception ex)
             {
                 logger.Error(ex, "Couldn't subscribe to SavePresetEvent.");
-                MessageBox.Show("Couldn't subscribe to Save Preset event.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Couldn't subscribe to Save Preset event.", "Paisley Park", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
 
             logger.Debug("创建命令.");
             try
             {
+                // 创建命令。
                 // Create the commands.
                 LoadPresetCommand = new DelegateCommand(LoadPreset);
                 ClosingCommand = new DelegateCommand(OnClose);
@@ -221,10 +246,12 @@ namespace PaisleyPark.ViewModels
             catch (Exception ex)
             {
                 logger.Error(ex, "Couldn't create a command.");
-                MessageBox.Show("Couldn't create commands.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Couldn't create commands.", "Paisley Park", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
 
+            // 监听属性变化。
             // Listen for property changed.
             UserSettings.PropertyChanged += OnPropertyChanged;
 
@@ -237,12 +264,14 @@ namespace PaisleyPark.ViewModels
         }
 
         /// <summary>
+        /// 初始化程序需要的内容。
         /// Starts everything needed for this process.
         /// </summary>
         /// <returns>Successful initialization.</returns>
         private bool Initialize()
         {
             logger.Info("初始化 Nhaama...");
+            // 初始化Nhaama
             // Initialize Nhaama.
             if (!InitializeNhaama())
                 return false;
@@ -252,6 +281,7 @@ namespace PaisleyPark.ViewModels
             // InjectCode();
 
             logger.Info("启动端口监听...");
+            // 检查是否为自动启动，如果是则启动HTTP服务
             // Check autostart and start the HTTP server if it's true.
             if (UserSettings.HTTPAutoStart)
                 OnStartServer();
@@ -260,42 +290,53 @@ namespace PaisleyPark.ViewModels
         }
 
         /// <summary>
+        /// 获取程序的偏移量，并且检查对应版本偏移量。
         /// Gets the offsets for the program, also checks for a new version for this game version.
         /// </summary>
         private void GetOffsets()
         {
+            // 获取FFXIV的确切版本。（通过Nhaama获取）
             // Get the current version of FFXIV.
             var gameDirectory = new DirectoryInfo(GameProcess.BaseProcess.MainModule.FileName);
             GameVersion = File.ReadAllText(Path.Combine(gameDirectory.Parent.FullName, "ffxivgame.ver"));
 
             logger.Debug($"游戏版本： {GameVersion}");
 
+            // 对照我们在设置中保存的游戏版本。
             // Check the game version against what we have saved in settings.
             if (UserSettings.LatestGameVersion != GameVersion)
             {
                 logger.Info($"游戏版本 {GameVersion} 与设置的最新版本 {UserSettings.LatestGameVersion} 不匹配. 下载新的Offset.");
+                // 创建客户端以获取最新版本的偏移量。
                 // Create client to fetch latest version of offsets.
                 try
                 {
                     using (var client = new WebClient())
                     {
+                        // 生成对应版本的偏移量json文件的uri地址。
                         // Form the URI for the game version's offsets file.
                         var uri = new Uri(OffsetUrl, $"{GameVersion}.json");
+                        // 覆盖本地offsets.json文件。
                         // Write the JSON to the disk overwriting the Offsets.json file used locally.
-                        File.WriteAllText(Path.Combine(Environment.CurrentDirectory, "Offsets.json"), client.DownloadString(uri));
+                        File.WriteAllText(Path.Combine(Environment.CurrentDirectory, "Offsets.json"),
+                            client.DownloadString(uri));
+                        // 将最新版本设为下载的版本。
                         // Set the lateste version to the version downloaded.
                         UserSettings.LatestGameVersion = GameVersion;
+                        // 保存修改。
                         // Save the settings.
                         Settings.Save(UserSettings);
                     }
                 }
                 catch (WebException ex)
                 {
-                    MessageBox.Show("无法找到符合当前游戏版本的Offsets.  这也许会导致预期之外的问题并且标点功能可能无法正常运作.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("无法找到符合当前游戏版本的Offsets.  这也许会导致预期之外的问题并且标点功能可能无法正常运作.", "Paisley Park",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                     logger.Error(ex, "无法从服务器获取或保存偏移量!");
                 }
             }
 
+            // 读取offsets.json文件。
             // Read the offsets.json file.
             try
             {
@@ -307,13 +348,14 @@ namespace PaisleyPark.ViewModels
             catch (Exception)
             {
                 MessageBox.Show("无法加载偏移文件！请手动选择文件.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                var dlg = new Microsoft.Win32.OpenFileDialog
+                var dlg = new OpenFileDialog
                 {
                     InitialDirectory = Environment.CurrentDirectory,
                     DefaultExt = ".json",
                     Filter = "JSON Files (*.json)|*.json|All files (*.*)|*.*"
                 };
 
+                // 显示对话框。
                 // Show dialog.
                 var result = dlg.ShowDialog();
 
@@ -328,7 +370,8 @@ namespace PaisleyPark.ViewModels
                     }
                     catch (Exception)
                     {
-                        MessageBox.Show("无法打开此偏移文件，程序即将退出.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("无法打开此偏移文件，程序即将退出.", "Paisley Park", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
                         Application.Current.Shutdown();
                     }
                 }
@@ -336,6 +379,7 @@ namespace PaisleyPark.ViewModels
         }
 
         /// <summary>
+        /// 获取应用程序的更新。
         /// Fetch an update for the applicaton.
         /// </summary>
         private void FetchUpdate()
@@ -370,6 +414,7 @@ namespace PaisleyPark.ViewModels
         }
 
         /// <summary>
+        /// 用户设置变更
         /// User Settings changed.
         /// </summary>
         /// <param name="sender"></param>
@@ -482,7 +527,7 @@ namespace PaisleyPark.ViewModels
             // Set the settings.
             vm.UserSettings = UserSettings;
             // Set the process list.
-            vm.ProcessList = new System.Collections.ObjectModel.ObservableCollection<Process>(procs);
+            vm.ProcessList = new ObservableCollection<Process>(procs);
 
             // Show the dialog and if result comes back false we canceled the window.
             if (ps.ShowDialog() == false || vm.SelectedProcess == null)
@@ -591,19 +636,23 @@ namespace PaisleyPark.ViewModels
 		}*/
 
         /// <summary>
+        /// 用于读取内存的工作循环。
         /// Worker loop for reading memory.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnWork(object sender, DoWorkEventArgs e)
         {
+            // 初始化指向我们要读取的内存的指针和地址。
             // Initialize pointers and addresses to the memory we're going to read.
             var ffxiv = GameProcess.BaseProcess.MainModule.BaseAddress;
 
             var WaymarkAddr = new IntPtr();
 
+            // 标点位置指针。
             // pointers for waymark positions
             var wayA = (ffxiv + Offsets.Waymarks + 0x00).ToUint64();
+            logger.Debug("A点地址：{0}", wayA.ToString("X4"));
             var wayB = (ffxiv + Offsets.Waymarks + 0x20).ToUint64();
             var wayC = (ffxiv + Offsets.Waymarks + 0x40).ToUint64();
             var wayD = (ffxiv + Offsets.Waymarks + 0x60).ToUint64();
@@ -619,6 +668,7 @@ namespace PaisleyPark.ViewModels
                 if (Worker.CancellationPending)
                     e.Cancel = true;
 
+                // 读取多个标点的局部参数。
                 // ReadWaymark local function to read multiple waymarks with.
                 Waymark ReadWaymark(ulong addr, WaymarkID id) => new Waymark
                 {
@@ -646,7 +696,8 @@ namespace PaisleyPark.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, "Exception while reading game memory. Waymark Address: {0}", WaymarkAddr.ToString("X4"));
+                    logger.Error(ex, "Exception while reading game memory. Waymark Address: {0}",
+                        WaymarkAddr.ToString("X4"));
                 }
 
                 // Sleep before next loop.
@@ -655,6 +706,7 @@ namespace PaisleyPark.ViewModels
         }
 
         /// <summary>
+        /// 将一个标点写入内存并激活它。
         /// Write a waymark in memory and place it.
         /// </summary>
         /// <param name="waymark">Waymark to place.</param>
@@ -664,7 +716,7 @@ namespace PaisleyPark.ViewModels
             if (waymark == null)
                 return;
 
-            var wID = (id == -1 ? (byte)waymark.ID : id);
+            var wID = (id == -1 ? (byte) waymark.ID : id);
 
             // Initialize pointers and addresses to the memory we're going to read.
             var ffxiv = GameProcess.BaseProcess.MainModule.BaseAddress;
@@ -682,21 +734,21 @@ namespace PaisleyPark.ViewModels
             if (UserSettings.LocalOnly)
             {
                 ulong markAddr = 0;
-                if (wID == (int)WaymarkID.A)
+                if (wID == (int) WaymarkID.A)
                     markAddr = wayA;
-                else if (wID == (int)WaymarkID.B)
+                else if (wID == (int) WaymarkID.B)
                     markAddr = wayB;
-                else if (wID == (int)WaymarkID.C)
+                else if (wID == (int) WaymarkID.C)
                     markAddr = wayC;
-                else if (wID == (int)WaymarkID.D)
+                else if (wID == (int) WaymarkID.D)
                     markAddr = wayD;
-                else if (wID == (int)WaymarkID.One)
+                else if (wID == (int) WaymarkID.One)
                     markAddr = wayOne;
-                else if (wID == (int)WaymarkID.Two)
+                else if (wID == (int) WaymarkID.Two)
                     markAddr = wayTwo;
-                else if (wID == (int)WaymarkID.Three)
+                else if (wID == (int) WaymarkID.Three)
                     markAddr = wayThree;
-                else if (wID == (int)WaymarkID.Four)
+                else if (wID == (int) WaymarkID.Four)
                     markAddr = wayFour;
 
                 if (waymark.Active)
@@ -706,14 +758,27 @@ namespace PaisleyPark.ViewModels
                     GameProcess.Write(markAddr + 0x4, waymark.Y);
                     GameProcess.Write(markAddr + 0x8, waymark.Z);
 
-                    GameProcess.Write(markAddr + 0x10, (int)(waymark.X * 1000));
-                    GameProcess.Write(markAddr + 0x14, (int)(waymark.Y * 1000));
-                    GameProcess.Write(markAddr + 0x18, (int)(waymark.Z * 1000));
+                    GameProcess.Write(markAddr + 0x10, (int) (waymark.X * 1000));
+                    GameProcess.Write(markAddr + 0x14, (int) (waymark.Y * 1000));
+                    GameProcess.Write(markAddr + 0x18, (int) (waymark.Z * 1000));
 
+                    // 写入标点状态
+                    // ps：这句话如只在这个if里面写设置1，不写设置0，标点会产生bug，特别进行修正
                     // Write the active state
-                    GameProcess.Write(markAddr + 0x1C, (byte)(waymark.Active ? 1 : 0));
+                    GameProcess.Write(markAddr + 0x1C, 1);
                 }
+                else
+                {
+                    GameProcess.Write(markAddr, 0);
+                    GameProcess.Write(markAddr + 0x4, 0);
+                    GameProcess.Write(markAddr + 0x8, 0);
 
+                    GameProcess.Write(markAddr + 0x10, 0);
+                    GameProcess.Write(markAddr + 0x14, 0);
+                    GameProcess.Write(markAddr + 0x18, 0);
+
+                    GameProcess.Write(markAddr + 0x1C, 0);
+                }
                 // Return out of this function
                 return;
             }
@@ -767,7 +832,9 @@ namespace PaisleyPark.ViewModels
 
             if (!UserSettings.LocalOnly)
             {
-                MessageBox.Show("此版本的Paisley Park只支持本地模式.\n这是因为5.2吉田更新了标点机制, 无法在战斗中修改.\n本地模式启动后, 用此软件修改的标点只有你自己能看见, 队友无法看见标点.", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show(
+                    "此版本的Paisley Park只支持本地模式.\n这是因为5.2吉田更新了标点机制, 无法在战斗中修改.\n本地模式启动后, 用此软件修改的标点只有你自己能看见, 队友无法看见标点.",
+                    "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
 
@@ -806,7 +873,8 @@ namespace PaisleyPark.ViewModels
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
-                logger.Error(ex, "An error occured while trying to call remote thread or writing waymarks into memory.");
+                logger.Error(ex,
+                    "An error occured while trying to call remote thread or writing waymarks into memory.");
                 OnClose();
                 Application.Current.Shutdown();
             }
@@ -823,7 +891,8 @@ namespace PaisleyPark.ViewModels
                 return;
 
             // Initialize the host.
-            Host = new NancyHost(new PaisleyParkBootstrapper(), new Uri($"http://localhost:{UserSettings.Port.ToString()}"));
+            Host = new NancyHost(new PaisleyParkBootstrapper(),
+                new Uri($"http://localhost:{UserSettings.Port.ToString()}"));
 
             // Start the Nancy Host.
             try
@@ -836,7 +905,8 @@ namespace PaisleyPark.ViewModels
             catch (Exception ex)
             {
                 logger.Error(ex, "Could not start Nancy host.");
-                MessageBox.Show($"无法在端口 {UserSettings.Port} 上启动HTTP服务!", "Paisley Park", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"无法在端口 {UserSettings.Port} 上启动HTTP服务!", "Paisley Park", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -875,7 +945,7 @@ namespace PaisleyPark.ViewModels
             var vm = win.DataContext as PresetManagerViewModel;
 
             // Populate the presets with our current presets as a new instance.
-            vm.Presets = new System.Collections.ObjectModel.ObservableCollection<Preset>(UserSettings.Presets);
+            vm.Presets = new ObservableCollection<Preset>(UserSettings.Presets);
 
             // Check if we're saving changes.
             if (win.ShowDialog() == true)
@@ -901,7 +971,7 @@ namespace PaisleyPark.ViewModels
             // Save the settings.
             Settings.Save(UserSettings);
 
-            NLog.LogManager.Shutdown();
+            LogManager.Shutdown();
         }
     }
 }
